@@ -1,0 +1,100 @@
+* {
+    font-family: "JetBrains Mono", "Hack", monospace;
+    font-size: 13px;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+window#waybar {
+    background-color: rgba(15, 17, 26, 0.65); /* Fondo oscuro semitransparente con blur */
+    color: #cdd6f4;
+}
+
+/* Botón de Inicio / Apagado */
+#custom-launcher {
+    padding: 0 12px;
+    font-size: 16px;
+    color: #e0e0e0;
+    background-color: transparent;
+}
+
+#custom-launcher:hover {
+    color: #f38ba8;
+}
+
+#custom-notification {
+    padding: 0 10px;
+    font-size: 15px;
+    color: #cba6f7;
+    background-color: transparent;
+}
+
+#custom-notification:hover {
+    color: #b4befe;
+}
+
+/* Barra de tareas (Aplicaciones abiertas por pantalla) */
+#taskbar {
+    margin-left: 6px;
+}
+
+#taskbar button {
+    padding: 0 6px;
+    margin: 2px 2px;
+    border-radius: 6px;
+    color: #cdd6f4;
+    background: transparent;
+    transition: all 0.2s ease-in-out;
+}
+
+#taskbar button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#taskbar button.active {
+    background-color: rgba(137, 180, 250, 0.2);
+    border-bottom: 2px solid #89b4fa;
+}
+
+/* Espaciado para los módulos de la derecha y centro */
+#pulseaudio, #network, #battery, #tray, #clock {
+    padding: 0 12px;
+    background-color: transparent; /* Mata los fondos de colores */
+    color: #cdd6f4;
+}
+
+/* Estilos de los Workspaces */
+#workspaces button {
+    padding: 0 10px;
+    color: #6c7086;
+    background: transparent;
+}
+
+#workspaces button.active {
+    color: #89b4fa;
+    font-weight: bold;
+}
+
+#workspaces button:hover {
+    box-shadow: inherit;
+    text-shadow: inherit;
+    color: #cdd6f4;
+}
+
+/* Alertas mínimas solo para batería crítica */
+#battery.warning {
+    color: #f9e2af;
+}
+
+#battery.critical {
+    color: #f38ba8;
+}
+
+#custom-date {
+    margin-right: 8px;
+}
+
+#custom-time {
+    margin-left: 8px;
+}

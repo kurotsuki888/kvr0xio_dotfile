@@ -1,0 +1,7 @@
+# Security & Temp exclusions
+.zsh_history
+*.log
+*.qslog
+.DS_Store
+*.tmp
+*.bak

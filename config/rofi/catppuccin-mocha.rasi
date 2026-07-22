@@ -1,0 +1,72 @@
+* {
+    bg-col:       rgba(15, 17, 26, 0.78);
+    bg-col-light: rgba(49, 50, 68, 0.75);
+    border-col:   #89b4fa;
+    selected-col: #89b4fa;
+    fg-col:       #cdd6f4;
+    grey:         #6c7086;
+    font: "JetBrains Mono 11";
+}
+
+window {
+    width: 380px;
+    border: 2px;
+    border-color: @border-col;
+    background-color: @bg-col;
+    border-radius: 10px;
+    location: north;
+    anchor: north;
+    y-offset: 42px;
+    padding: 4px;
+}
+
+mainbox {
+    background-color: transparent;
+    padding: 4px;
+}
+
+inputbar {
+    children: [prompt, entry];
+    background-color: @bg-col-light;
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin: 0 0 8px 0;
+}
+
+prompt {
+    background-color: transparent;
+    text-color: @border-col;
+    padding: 0 8px 0 0;
+}
+
+entry {
+    background-color: transparent;
+    text-color: @fg-col;
+    placeholder-color: @grey;
+}
+
+listview {
+    background-color: transparent;
+    columns: 1;
+    lines: 8;
+    spacing: 4px;
+    fixed-height: false;
+}
+
+element {
+    background-color: transparent;
+    text-color: @fg-col;
+    padding: 8px 10px;
+    border-radius: 6px;
+}
+
+element selected {
+    background-color: @selected-col;
+    text-color: @bg-col;
+}
+
+element-text {
+    background-color: inherit;
+    text-color: inherit;
+    vertical-align: 0.5;
+}

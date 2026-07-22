@@ -1,0 +1,76 @@
+* {
+    bg-col:       rgba(15, 17, 26, 0.78);
+    bg-col-light: rgba(30, 30, 46, 0.75);
+    border-col:   #89b4fa;
+    selected-col: #89b4fa;
+    selected-fg:  #11111b;
+    fg-col:       #cdd6f4;
+    grey:         #6c7086;
+    font: "JetBrains Mono 10.5";
+}
+
+window {
+    width: 310px;
+    border: 2px;
+    border-color: @border-col;
+    background-color: @bg-col;
+    border-radius: 14px;
+    location: north east;
+    anchor: north east;
+    x-offset: -130px;
+    y-offset: 36px;
+    padding: 14px;
+}
+
+mainbox {
+    background-color: transparent;
+    children: [ "inputbar", "listview" ];
+    spacing: 10px;
+}
+
+inputbar {
+    background-color: @bg-col-light;
+    border-radius: 10px;
+    padding: 8px 12px;
+    children: [ prompt, entry ];
+}
+
+prompt {
+    background-color: transparent;
+    text-color: @border-col;
+    font: "JetBrains Mono Bold 11";
+}
+
+entry {
+    background-color: transparent;
+    text-color: @fg-col;
+    placeholder: "Dispositivos...";
+    placeholder-color: @grey;
+}
+
+listview {
+    background-color: transparent;
+    columns: 1;
+    lines: 7;
+    spacing: 6px;
+    fixed-height: false;
+    dynamic: true;
+}
+
+element {
+    background-color: @bg-col-light;
+    text-color: @fg-col;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+element selected {
+    background-color: @selected-col;
+    text-color: @selected-fg;
+}
+
+element-text {
+    background-color: inherit;
+    text-color: inherit;
+    vertical-align: 0.5;
+}

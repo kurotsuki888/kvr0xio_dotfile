@@ -1,0 +1,10 @@
+layout tall:mirrored=true
+
+# 1. Main (Columna derecha completa)
+launch --title=btop zsh -c "sleep 0.2 && btop && exec zsh"
+
+# 2. Secundaria 1 (Columna izquierda, arriba)
+launch --title=fastfetch zsh -c "fastfetch && exec zsh"
+
+# 3. Secundaria 2 (Columna izquierda, abajo)
+launch --title=clock zsh -c "sleep 0.2 && tty-clock -s -c && exec zsh"
