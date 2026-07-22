@@ -11,10 +11,10 @@ Mis configuraciones personalizadas para **Hyprland**, **Waybar**, **Quickshell**
 - **Rofi** (`~/.config/rofi`) - Lanzador y menús gráficos.
 - **Zsh & Powerlevel10k** (`~/.zshrc`, `~/.p10k.zsh`) - Prompt y terminal estilizado.
 
-## 🚀 Instalación rápida en una nueva PC
+## 🚀 Instalación
 
 ```bash
-git clone https://github.com/TU_USUARIO/kvr0xio_dotfile.git ~/kvr0xio_dotfile
+git clone https://github.com/kurotsuki888/kvr0xio_dotfile.git ~/kvr0xio_dotfile
 cd ~/kvr0xio_dotfile
 ./install.sh
 ```
