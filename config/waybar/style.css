@@ -11,7 +11,18 @@ window#waybar {
     color: #cdd6f4;
 }
 
-/* Botón de Inicio / Apagado */
+/* Botón de Inicio / Apagado / Ajustes Rápidos */
+#custom-controlcenter {
+    padding: 0 12px;
+    font-size: 16px;
+    color: #89b4fa;
+    background-color: transparent;
+}
+
+#custom-controlcenter:hover {
+    color: #b4befe;
+}
+
 #custom-launcher {
     padding: 0 12px;
     font-size: 16px;
@@ -58,10 +69,23 @@ window#waybar {
 }
 
 /* Espaciado para los módulos de la derecha y centro */
-#pulseaudio, #network, #battery, #tray, #clock {
+#custom-mpris, #pulseaudio, #network, #battery, #tray, #clock {
     padding: 0 12px;
     background-color: transparent; /* Mata los fondos de colores */
     color: #cdd6f4;
+}
+
+#custom-mpris {
+    color: #a6e3a1;
+    transition: color 0.2s ease-in-out;
+}
+
+#custom-mpris.paused {
+    color: #a6adc8;
+}
+
+#custom-mpris:hover {
+    color: #89b4fa;
 }
 
 /* Estilos de los Workspaces */

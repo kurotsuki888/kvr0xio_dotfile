@@ -15,12 +15,19 @@
         "all-outputs": false
     },
     "modules-center": ["custom/date", "custom/time"],
-    "modules-right": ["pulseaudio", "network", "bluetooth", "battery", "tray", "custom/notification", "custom/launcher"],
+    "modules-right": ["custom/mpris", "network", "battery", "tray", "custom/notification", "custom/controlcenter"],
+
+    "custom/controlcenter": {
+        "format": "⚙",
+        "on-click": "~/.config/waybar/scripts/toggle-quickshell.sh ~/.config/quickshell/QuickSettings.qml",
+        "tooltip-format": "Ajustes Rápidos (Volumen, Brillo, Bluetooth, Sistema)"
+    },
 
     "custom/notification": {
-        "format": "󰂚",
-        "on-click": "~/.config/waybar/scripts/toggle-quickshell.sh ~/.config/quickshell/NotificationCenter.qml",
-        "tooltip-format": "Centro de Notificaciones"
+        "exec": "~/.config/waybar/scripts/waybar-notification-count.sh",
+        "return-type": "json",
+        "interval": 2,
+        "on-click": "~/.config/waybar/scripts/toggle-quickshell.sh ~/.config/quickshell/NotificationCenter.qml"
     },
 
     "custom/launcher": {
@@ -47,13 +54,22 @@
     	"on-click": "~/.config/waybar/scripts/toggle-quickshell.sh ~/.config/quickshell/TimeMenu.qml"
     },
 
+    "custom/mpris": {
+        "exec": "/home/kuro/.config/waybar/scripts/waybar-mpris.py",
+        "return-type": "json",
+        "interval": 2,
+        "on-click": "playerctl play-pause",
+        "on-click-right": "playerctl next",
+        "on-click-middle": "playerctl previous"
+    },
+
     "pulseaudio": {
         "format": "{icon}  {volume}%",
         "format-muted": "󰖁  Silenciado",
         "format-icons": {
             "default": ["󰕿", "󰖀", "󰕾"]
         },
-        "on-click": "pavucontrol"
+        "on-click": "env GTK_THEME=Adwaita:dark pavucontrol"
     },
 
     "battery": {

@@ -46,11 +46,21 @@ def get_notifs():
             body = n.get('body', {}).get('data', '').strip()
             body_clean = re.sub(r'<[^<]+?>', '', body)
             nid = n.get('id', {}).get('data', 0)
+            
+            app_lower = app.lower()
+            if any(k in app_lower for k in ['mail', 'kmail', 'thunderbird', 'geary', 'gmail', 'whatsie', 'whatsapp', 'telegram', 'signal']):
+                cat = 'mail'
+            elif any(k in app_lower for k in ['sistema', 'system', 'hyprland', 'wireplumber', 'networkmanager', 'antigravity', 'dunst', 'volume', 'brightness', 'bluetooth', 'kde']):
+                cat = 'system'
+            else:
+                cat = 'system'
+                
             out.append({
                 'id': nid,
                 'app': app,
                 'summary': summary,
-                'body': body_clean
+                'body': body_clean,
+                'cat': cat
             })
         dnd_res = False
         try:
@@ -213,8 +223,13 @@ print(json.dumps(get_notifs()))
                             implicitHeight: notifCol.implicitHeight + 20
                             radius: 12
                             color: "#181825"
-                            border.color: "#313244"
-                            border.width: 1
+                            
+                            property bool isMail: model.cat === "mail"
+                            property color accentColor: isMail ? "#a6e3a1" : "#89b4fa"
+                            property color borderColor: isMail ? "#2ec27e" : "#3584e4"
+
+                            border.color: borderColor
+                            border.width: 1.5
 
                             ColumnLayout {
                                 id: notifCol
@@ -225,14 +240,35 @@ print(json.dumps(get_notifs()))
                                 RowLayout {
                                     Layout.fillWidth: true
 
-                                    Text {
-                                        text: "󰂚  " + model.app
-                                        font.pixelSize: 10
-                                        font.bold: true
-                                        color: "#cba6f7"
-                                        elide: Text.ElideRight
-                                        Layout.fillWidth: true
+                                    // App Tag Badge
+                                    Rectangle {
+                                        implicitHeight: 20
+                                        implicitWidth: appTagRow.implicitWidth + 12
+                                        radius: 6
+                                        color: isMail ? "#1e3a29" : "#1e293b"
+                                        border.color: accentColor
+                                        border.width: 1
+
+                                        RowLayout {
+                                            id: appTagRow
+                                            anchors.centerIn: parent
+                                            spacing: 4
+                                            Text {
+                                                text: isMail ? "󰇮" : "󰍹"
+                                                font.pixelSize: 10
+                                                color: accentColor
+                                            }
+                                            Text {
+                                                text: model.app
+                                                font.pixelSize: 10
+                                                font.bold: true
+                                                color: accentColor
+                                                elide: Text.ElideRight
+                                            }
+                                        }
                                     }
+
+                                    Item { Layout.fillWidth: true }
 
                                     // Dismiss single notification button
                                     Rectangle {

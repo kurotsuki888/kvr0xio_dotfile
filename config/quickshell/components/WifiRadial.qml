@@ -34,6 +34,10 @@ Item {
     property string passwordInput: ""
     property string connectError: ""
 
+    Component.onCompleted: {
+        wifiProc.running = true;
+    }
+
     // Process to scan Wi-Fi networks and active status
     Process {
         id: wifiProc
@@ -57,13 +61,12 @@ def get_wifi():
             except Exception:
                 pass
 
-            res = subprocess.check_output(['nmcli', '-t', '-f', 'ACTIVE,SSID,SIGNAL,SECURITY', 'dev', 'wifi']).decode('utf-8', errors='ignore')
+            res = subprocess.check_output(['nmcli', '-t', '-f', 'ACTIVE,SSID,SIGNAL,SECURITY', 'dev', 'wifi', 'list', '--rescan', 'auto']).decode('utf-8', errors='ignore')
             seen = set()
             try:
-                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                s.connect(('1.1.1.1', 80))
-                ip = s.getsockname()[0]
-                s.close()
+                ip_res = subprocess.check_output(['hostname', '-I'], stderr=subprocess.DEVNULL).decode('utf-8', errors='ignore').strip()
+                if ip_res:
+                    ip = ip_res.split()[0]
             except Exception:
                 ip = 'Offline'
 
@@ -97,7 +100,7 @@ def get_wifi():
             'active_ip': ip if active_wifi else 'Offline',
             'active_signal': active_wifi['signal'] if active_wifi else 0,
             'active_security': active_wifi['security'] if active_wifi else 'None',
-            'networks': networks[:6]
+            'networks': networks[:8]
         }
     except Exception as e:
         return {'wifi_powered': False, 'connected': False, 'active_ssid': '', 'active_ip': 'Offline', 'active_signal': 0, 'active_security': 'None', 'networks': [], 'error': str(e)}
@@ -145,6 +148,27 @@ print(json.dumps(get_wifi()))
                 root.isBusy = false;
                 wifiProc.running = true;
             }
+        }
+    }
+
+    // Process to force full Wi-Fi rescan
+    Process {
+        id: rescanProc
+        command: ["bash", "-c", "nmcli dev wifi rescan"]
+        stdout: SplitParser {
+            onRead: data => {
+                wifiProc.running = true;
+            }
+        }
+    }
+
+    Timer {
+        id: rescanDelayTimer
+        interval: 2800
+        repeat: false
+        onTriggered: {
+            root.isScanning = false;
+            wifiProc.running = true;
         }
     }
 
@@ -213,6 +237,67 @@ print(json.dumps(get_wifi()))
                     }
                     ctx.stroke();
                 }
+            }
+        }
+    }
+
+    // Re-scan Button (Top-left corner)
+    Rectangle {
+        id: rescanBtn
+        z: 30
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.margins: 10
+        implicitHeight: 32
+        implicitWidth: rescanRow.implicitWidth + 20
+        radius: 16
+        color: "#d9161b22"
+        border.color: root.isScanning ? "#38bdf8" : "#30363d"
+        border.width: 1
+
+        Behavior on border.color { ColorAnimation { duration: 200 } }
+
+        RowLayout {
+            id: rescanRow
+            anchors.centerIn: parent
+            spacing: 6
+
+            Text {
+                id: rescanIconText
+                text: "󰑐"
+                font.pixelSize: 14
+                color: root.isScanning ? "#38bdf8" : "#89b4fa"
+                rotation: 0
+
+                NumberAnimation on rotation {
+                    running: root.isScanning
+                    from: 0
+                    to: 360
+                    duration: 800
+                    loops: Animation.Infinite
+                    onRunningChanged: {
+                        if (!running) rescanIconText.rotation = 0;
+                    }
+                }
+            }
+
+            Text {
+                text: root.isScanning ? "Buscando..." : "Escanear redes"
+                font.pixelSize: 11
+                font.bold: true
+                color: root.isScanning ? "#38bdf8" : "#cdd6f4"
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: root.isScanning ? Qt.WaitCursor : Qt.PointingHandCursor
+            onClicked: {
+                if (root.isScanning || root.isBusy) return;
+                root.isScanning = true;
+                rescanProc.command = ["bash", "-c", "nmcli dev wifi rescan"];
+                rescanProc.running = true;
+                rescanDelayTimer.start();
             }
         }
     }
@@ -317,10 +402,16 @@ print(json.dumps(get_wifi()))
             property real pressStartX: 0
             property real pressStartY: 0
 
-            // Orbital geometry calculation based on index
+            // Orbital geometry calculation based on signal percentage (% signal)
             property real countTotal: cardsRepeater.count > 0 ? cardsRepeater.count : 1
-            property real baseAngle: (index / countTotal) * 2 * Math.PI - Math.PI / 2
-            property real orbitR: 190
+            property real signalVal: Math.max(5, Math.min(100, cardSignal))
+            property real minR: 125 // Strongest signal (100%) - closest to center hub without touching
+            property real maxR: 215 // Weakest signal (0%) - furthest away
+            property real orbitR: maxR - ((signalVal / 100.0) * (maxR - minR))
+            
+            // Distributed angle with organic offset
+            property real angleJitter: (index % 2 === 1 ? 0.15 : -0.15)
+            property real baseAngle: (index / countTotal) * 2 * Math.PI - Math.PI / 2 + angleJitter
             property real baseX: (root.width / 2) + orbitR * Math.cos(baseAngle) - width / 2
             property real baseY: (root.height / 2) + orbitR * Math.sin(baseAngle) - height / 2
 

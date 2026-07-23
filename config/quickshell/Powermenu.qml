@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Io
 
 PanelWindow {
     id: win
@@ -17,6 +18,19 @@ PanelWindow {
     anchors.right: true
     margins.top: 36
     margins.right: 12
+
+    Process {
+        id: actionProc
+        command: ["bash", "-c", "echo ok"]
+        onExited: (code, status) => {
+            Qt.quit();
+        }
+    }
+
+    function runPowerCmd(cmdStr) {
+        actionProc.command = ["bash", "-c", cmdStr];
+        actionProc.running = true;
+    }
 
     Shortcut {
         sequences: ["Escape"]
@@ -116,10 +130,7 @@ PanelWindow {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            Quickshell.exec(["hyprlock"]);
-                            win.destroy();
-                        }
+                        onClicked: win.runPowerCmd("hyprlock")
                     }
                 }
 
@@ -143,10 +154,7 @@ PanelWindow {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            Quickshell.exec(["hyprctl", "dispatch", "exit"]);
-                            win.destroy();
-                        }
+                        onClicked: win.runPowerCmd("hyprctl dispatch exit")
                     }
                 }
 
@@ -170,10 +178,7 @@ PanelWindow {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            Quickshell.exec(["systemctl", "reboot"]);
-                            win.destroy();
-                        }
+                        onClicked: win.runPowerCmd("systemctl reboot")
                     }
                 }
 
@@ -197,10 +202,7 @@ PanelWindow {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            Quickshell.exec(["systemctl", "poweroff"]);
-                            win.destroy();
-                        }
+                        onClicked: win.runPowerCmd("systemctl poweroff")
                     }
                 }
             }
