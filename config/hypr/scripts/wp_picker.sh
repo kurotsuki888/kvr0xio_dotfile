@@ -1,7 +1,7 @@
 #!/bin/bash
 shopt -s nullglob nocaseglob
 
-WP_DIR="$HOME/Vídeos/Wallpapers"
+WP_DIR="$HOME/Imágenes/wallpapers"
 CACHE_DIR="$HOME/.cache/wp_thumbnails"
 STATE_FILE="$HOME/.config/hypr/.current_wallpaper"
 
@@ -13,51 +13,41 @@ MAX_COLUMNS=3
 mkdir -p "$WP_DIR"
 mkdir -p "$CACHE_DIR"
 
-FILES=("$WP_DIR"/*.{mp4,mkv,jpg,png})
+FILES=("$WP_DIR"/*.{jpg,jpeg,png,webp})
 
 if [ ${#FILES[@]} -eq 0 ]; then
     rofi -e "Directorio vacío o ruta incorrecta: $WP_DIR"
     exit 1
 fi
 
-TOTAL=${#FILES[@]}
-
 ROFI_LIST=""
 VALID_COUNT=0
+
 for file in "${FILES[@]}"; do
+    [ -f "$file" ] || continue
     filename=$(basename "$file")
     thumb="$CACHE_DIR/${filename}.${THUMB_W}x${THUMB_H}.jpg"
 
+    # Generar miniatura si no existe
     if [ ! -s "$thumb" ]; then
-        if [[ "$file" == *.mp4 || "$file" == *.mkv ]]; then
-            ffmpeg -y -i "$file" -ss 00:00:01 -vframes 1 \
-                -vf "scale=${THUMB_W}:${THUMB_H}:force_original_aspect_ratio=increase,crop=${THUMB_W}:${THUMB_H}" \
-                "$thumb" -loglevel error
-            # Videos muy cortos no tienen frame en el segundo 1: reintenta desde el inicio
-            if [ ! -s "$thumb" ]; then
-                echo "wp_picker: reintentando '$filename' desde el frame 0" >&2
-                ffmpeg -y -i "$file" -vframes 1 \
-                    -vf "scale=${THUMB_W}:${THUMB_H}:force_original_aspect_ratio=increase,crop=${THUMB_W}:${THUMB_H}" \
-                    "$thumb" -loglevel error
-            fi
-        else
-            ffmpeg -y -i "$file" \
-                -vf "scale=${THUMB_W}:${THUMB_H}:force_original_aspect_ratio=increase,crop=${THUMB_W}:${THUMB_H}" \
-                "$thumb" -loglevel error
-        fi
+        ffmpeg -y -i "$file" \
+            -vf "scale=${THUMB_W}:${THUMB_H}:force_original_aspect_ratio=increase,crop=${THUMB_W}:${THUMB_H}" \
+            "$thumb" -loglevel error
         if [ ! -s "$thumb" ]; then
-            echo "wp_picker: no se pudo generar miniatura para '$filename', se omite" >&2
+            echo "wp_picker: no se pudo generar miniatura para '$filename'" >&2
             rm -f "$thumb"
             continue
         fi
     fi
+
     ROFI_LIST+="${filename}\0icon\x1f${thumb}\n"
     VALID_COUNT=$((VALID_COUNT + 1))
 done
+
 TOTAL=$VALID_COUNT
 
 if [ "$TOTAL" -eq 0 ]; then
-    rofi -e "No se pudo generar ninguna miniatura. Revisa la terminal para más detalles."
+    rofi -e "No se pudo generar ninguna miniatura en $WP_DIR"
     exit 1
 fi
 
@@ -69,7 +59,7 @@ WINDOW_BORDER=1
 ELEMENT_OUTER_W=$(( THUMB_W + 4 ))
 WINDOW_WIDTH=$(( ELEMENT_OUTER_W * VISIBLE_ITEMS + SPACING * (VISIBLE_ITEMS - 1) + WINDOW_PADDING * 2 + WINDOW_BORDER * 2 ))
 
-# Paleta Catppuccin Mocha, igual que rofi-wifi.sh / rofi-bluetooth.sh
+# Paleta Catppuccin Mocha
 BASE="#1e1e2ef2"
 SURFACE1="#45475a"
 BLUE="#89b4fa"

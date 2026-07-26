@@ -6,11 +6,15 @@ SOCK_HDMI="/tmp/mpvpaper-HDMI.sock"
 # Flag de pausa manual — si existe, el demonio NO sobreescribe el estado
 MANUAL_PAUSE_FLAG="/tmp/wp_manual_pause"
 
+# Estado anterior por monitor (evita enviar comandos repetidos innecesariamente)
+PREV_EDP=""
+PREV_HDMI=""
+
 send_pause() {
     local sock="$1"
     local val="$2"
     if [ -S "$sock" ]; then
-        echo "{ \"command\": [\"set_property\", \"pause\", $val] }" | socat -t 1 - "$sock" >/dev/null 2>&1 || true
+        echo "{ \"command\": [\"set_property\", \"pause\", $val] }" | socat -t 1 - UNIX-CONNECT:"$sock" > /dev/null 2>&1 || true
     fi
 }
 
@@ -26,28 +30,41 @@ check_and_toggle() {
     clients=$(hyprctl clients -j 2>/dev/null)
     [ -z "$clients" ] && clients="[]"
 
-    # Obtener workspace activo de cada monitor sin usar pipe (evita subshell)
     ws_edp=$(echo "$monitors"  | jq -r '.[] | select(.name == "eDP-1")   | .activeWorkspace.id' 2>/dev/null)
     ws_hdmi=$(echo "$monitors" | jq -r '.[] | select(.name == "HDMI-A-1") | .activeWorkspace.id' 2>/dev/null)
 
-    # Contar ventanas visibles en cada workspace activo
+    # --- Monitor eDP-1 ---
     if [ -n "$ws_edp" ]; then
         wins_edp=$(echo "$clients" | jq "[.[] | select(.workspace.id == $ws_edp and .mapped == true)] | length" 2>/dev/null)
         wins_edp=${wins_edp:-0}
-        if [ "$wins_edp" -gt 0 ]; then
-            send_pause "$SOCK_EDP" "true"
-        else
-            send_pause "$SOCK_EDP" "false"
+        local new_state_edp
+        [ "$wins_edp" -gt 0 ] && new_state_edp="throttle" || new_state_edp="play"
+
+        # Solo enviar si cambió el estado (evita socat innecesario cada segundo)
+        if [ "$new_state_edp" != "$PREV_EDP" ]; then
+            if [ "$new_state_edp" = "throttle" ]; then
+                throttle_monitor "$SOCK_EDP"
+            else
+                resume_monitor "$SOCK_EDP"
+            fi
+            PREV_EDP="$new_state_edp"
         fi
     fi
 
+    # --- Monitor HDMI-A-1 ---
     if [ -n "$ws_hdmi" ]; then
         wins_hdmi=$(echo "$clients" | jq "[.[] | select(.workspace.id == $ws_hdmi and .mapped == true)] | length" 2>/dev/null)
         wins_hdmi=${wins_hdmi:-0}
-        if [ "$wins_hdmi" -gt 0 ]; then
-            send_pause "$SOCK_HDMI" "true"
-        else
-            send_pause "$SOCK_HDMI" "false"
+        local new_state_hdmi
+        [ "$wins_hdmi" -gt 0 ] && new_state_hdmi="throttle" || new_state_hdmi="play"
+
+        if [ "$new_state_hdmi" != "$PREV_HDMI" ]; then
+            if [ "$new_state_hdmi" = "throttle" ]; then
+                throttle_monitor "$SOCK_HDMI"
+            else
+                resume_monitor "$SOCK_HDMI"
+            fi
+            PREV_HDMI="$new_state_hdmi"
         fi
     fi
 }
@@ -57,8 +74,8 @@ if [ "${1:-}" == "check_only" ]; then
     exit 0
 fi
 
-# Bucle principal
+# Bucle principal — cada 2s es suficiente, reduce CPU del script
 while true; do
     check_and_toggle
-    sleep 1
+    sleep 2
 done

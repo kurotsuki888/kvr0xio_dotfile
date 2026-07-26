@@ -1,8 +1,6 @@
 #!/bin/bash
-STATE_FILE="$HOME/.config/hypr/.current_wallpaper"
-DEFAULT_WP="$HOME/Vídeos/Wallpapers/clean.mp4"
+# init_wp.sh — Inicializa el fondo de pantalla estático al arrancar Hyprland
+# Llama a set_wallpaper.sh sin argumentos: usa el último fondo guardado,
+# o uno al azar de ~/Imágenes/wallpapers/ si no hay historial.
 
-TARGET_WP="$DEFAULT_WP"
-[ -f "$STATE_FILE" ] && TARGET_WP=$(cat "$STATE_FILE")
-
-~/.config/hypr/scripts/set_wallpaper.sh "$TARGET_WP"
+~/.config/hypr/scripts/set_wallpaper.sh
