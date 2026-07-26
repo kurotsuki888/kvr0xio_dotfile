@@ -24,6 +24,23 @@ PanelWindow {
         command: ["bash", "-c", "echo ok"]
     }
 
+    // Leer $HOME del sistema (más fiable que StandardPaths en Quickshell)
+    Process {
+        id: homeProc
+        command: ["bash", "-c", "echo $HOME"]
+        running: true
+        stdout: SplitParser {
+            onRead: data => {
+                let h = data.trim();
+                if (h.length > 0) {
+                    win.homePath = h;
+                    // Cargar avatar una vez que tenemos el path real
+                    avatarImage.source = "file://" + win.homePath + "/.config/hypr/profile.png?t=" + Date.now();
+                }
+            }
+        }
+    }
+
     // Leer nombre del usuario del sistema
     Process {
         id: userProc
@@ -38,21 +55,45 @@ PanelWindow {
     }
 
     // Proceso para cambiar foto de perfil
+    // Usa magick para convertir cualquier formato a PNG sRGB correcto
     Process {
         id: profileProc
         command: ["bash", "-c", "echo ok"]
-        onExited: (code, status) => {
-            // Forzar recarga limpia de la imagen
-            avatarImage.source = "";
-            avatarImage.source = "file://" + win.avatarPath + "?t=" + Date.now();
+        onExited: (exitCode, status) => {
+            if (exitCode === 0) {
+                win.profileStatus = "success";
+                // Recargar imagen con cache-bust
+                avatarImage.source = "";
+                avatarImage.source = "file://" + win.homePath + "/.config/hypr/profile.png?t=" + Date.now();
+                statusResetTimer.restart();
+            } else if (exitCode === 1) {
+                // Código 1 = el usuario canceló zenity (sin archivo elegido), no es error real
+                win.profileStatus = "idle";
+            } else {
+                win.profileStatus = "error";
+                win.profileError = "Error al convertir (cód. " + exitCode + ")";
+                statusResetTimer.restart();
+            }
         }
     }
 
-    // Ruta estándar del perfil (compartida con Hyprlock)
-    readonly property string avatarPath: StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/.config/hypr/profile.png"
+    // Timer para auto-limpiar el estado de éxito/error
+    Timer {
+        id: statusResetTimer
+        interval: 3000
+        onTriggered: win.profileStatus = "idle"
+    }
 
+    // Ruta home leída del sistema
+    property string homePath: ""
+    // Ruta del perfil (construida una vez que homePath esté disponible)
+    readonly property string avatarPath: homePath + "/.config/hypr/profile.png"
     // Nombre de usuario dinámico
     property string currentUser: "usuario"
+    // Estado del proceso de cambio de foto: idle | loading | success | error
+    property string profileStatus: "idle"
+    // Mensaje de error si falla
+    property string profileError: ""
 
     function runCmd(cmdStr) {
         execProc.command = ["bash", "-c", cmdStr];
@@ -60,14 +101,18 @@ PanelWindow {
     }
 
     function changeProfilePhoto() {
+        win.profileStatus = "loading";
+        win.profileError = "";
         profileProc.command = [
             "bash", "-c",
-            // Acepta cualquier formato de imagen, siempre convierte a PNG sRGB con magick
-            "f=$(zenity --file-selection \\
-                --title='Elige tu foto de perfil' \\
-                --file-filter='Imágenes (jpg, png, webp, avif...)  | *.jpg *.jpeg *.png *.webp *.avif *.gif *.bmp *.tiff *.heic' \\
-                2>/dev/null); \\
-            [ -n \"$f\" ] && magick \"$f\" -colorspace sRGB -type TrueColorAlpha ~/.config/hypr/profile.png"
+            // Zenity abre selector, si el usuario cancela sale con código 1
+            // magick convierte cualquier formato (jpg, png, webp, avif, gif, bmp, tiff, heic...)
+            "f=$(zenity --file-selection "
+            + "--title='Elige tu foto de perfil' "
+            + "--file-filter='Imágenes | *.jpg *.jpeg *.png *.webp *.avif *.gif *.bmp *.tiff *.heic *.JPG *.PNG' "
+            + "2>/dev/null) || exit 1; "
+            + "[ -z \"$f\" ] && exit 1; "
+            + "magick \"$f\" -colorspace sRGB -type TrueColor ~/.config/hypr/profile.png || exit 2"
         ];
         profileProc.running = true;
     }
@@ -172,7 +217,8 @@ PanelWindow {
                     Image {
                         id: avatarImage
                         anchors.fill: parent
-                        source: "file://" + win.avatarPath
+                        // source se asigna dinámicamente en homeProc.onRead
+                        source: ""
                         fillMode: Image.PreserveAspectCrop
                         cache: false
                     }
@@ -388,35 +434,117 @@ PanelWindow {
 
             // Botón cambiar foto de perfil
             Rectangle {
+                id: photoBtn
                 Layout.fillWidth: true
-                implicitHeight: 36
+                implicitHeight: win.profileStatus === "error" ? 52 : 36
                 radius: 8
-                color: profileHover.containsMouse ? "#1a313244" : "transparent"
-                border.color: "#30363d"
+                color: profileHover.containsMouse && win.profileStatus === "idle" ? "#1a313244" : "transparent"
+                border.color: {
+                    if (win.profileStatus === "error")   return "#f38ba8";
+                    if (win.profileStatus === "success") return "#a6e3a1";
+                    return "#30363d";
+                }
                 border.width: 1
 
-                Behavior on color { ColorAnimation { duration: 120 } }
+                Behavior on color   { ColorAnimation  { duration: 120 } }
+                Behavior on implicitHeight { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
 
-                RowLayout {
+                ColumnLayout {
                     anchors.fill: parent
                     anchors.leftMargin: 12
                     anchors.rightMargin: 12
-                    spacing: 8
-                    Text { text: "🖼"; font.pixelSize: 13 }
-                    Text {
-                        text: "Cambiar foto de perfil"
-                        font.pixelSize: 11
-                        color: "#7f849c"
+                    anchors.topMargin: 6
+                    anchors.bottomMargin: 6
+                    spacing: 4
+
+                    // Fila principal del botón
+                    RowLayout {
                         Layout.fillWidth: true
+                        spacing: 8
+
+                        Text { text: "🖼"; font.pixelSize: 13; opacity: win.profileStatus === "loading" ? 0.4 : 1 }
+
+                        Text {
+                            text: "Cambiar foto de perfil"
+                            font.pixelSize: 11
+                            color: {
+                                if (win.profileStatus === "success") return "#a6e3a1";
+                                if (win.profileStatus === "error")   return "#f38ba8";
+                                return "#7f849c";
+                            }
+                            Layout.fillWidth: true
+                            Behavior on color { ColorAnimation { duration: 200 } }
+                        }
+
+                        // --- Indicador de estado ---
+
+                        // Spinner de carga (solo visible en loading)
+                        Rectangle {
+                            id: spinner
+                            visible: win.profileStatus === "loading"
+                            implicitWidth: 14; implicitHeight: 14
+                            radius: 7
+                            color: "transparent"
+                            border.color: "#89b4fa"
+                            border.width: 2
+
+                            // Arco animado encima
+                            Rectangle {
+                                width: 6; height: 6
+                                radius: 3
+                                color: "#89b4fa"
+                                anchors.top: parent.top
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.topMargin: -2
+                            }
+
+                            RotationAnimator on rotation {
+                                running: win.profileStatus === "loading"
+                                from: 0; to: 360
+                                duration: 900
+                                loops: Animation.Infinite
+                            }
+                        }
+
+                        // Tick de éxito
+                        Text {
+                            visible: win.profileStatus === "success"
+                            text: "✓"
+                            font.pixelSize: 13
+                            font.bold: true
+                            color: "#a6e3a1"
+                            Behavior on opacity { NumberAnimation { duration: 200 } }
+                        }
+
+                        // X de error
+                        Text {
+                            visible: win.profileStatus === "error"
+                            text: "✗"
+                            font.pixelSize: 13
+                            font.bold: true
+                            color: "#f38ba8"
+                        }
                     }
-                    Text { text: "→"; font.pixelSize: 11; color: "#45475a" }
+
+                    // Fila de mensaje de error (solo visible en error)
+                    Text {
+                        visible: win.profileStatus === "error"
+                        text: win.profileError
+                        font.pixelSize: 9
+                        color: "#f38ba8"
+                        opacity: 0.8
+                        Layout.fillWidth: true
+                        wrapMode: Text.WordWrap
+                        Behavior on opacity { NumberAnimation { duration: 200 } }
+                    }
                 }
 
                 MouseArea {
                     id: profileHover
                     anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
+                    cursorShape: win.profileStatus === "loading" ? Qt.BusyCursor : Qt.PointingHandCursor
                     hoverEnabled: true
+                    enabled: win.profileStatus !== "loading"
                     onClicked: win.changeProfilePhoto()
                 }
             }
