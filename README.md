@@ -1,4 +1,4 @@
-# ⚡ kvr0xio_dotfile
+# 🦇 kvr0xio_dotfile
 
 Mis configuraciones personalizadas para **Hyprland**, **Waybar**, **Quickshell**, **Kitty**, **Rofi**, **Zsh** y **Powerlevel10k**, listas para instalar en cualquier sistema con una sola línea.
 
