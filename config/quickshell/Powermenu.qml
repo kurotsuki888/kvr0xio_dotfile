@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Io
+import Qt.labs.platform as Platform
 
 PanelWindow {
     id: win
@@ -27,9 +28,32 @@ PanelWindow {
         }
     }
 
+    // Proceso para cambiar la foto de perfil
+    Process {
+        id: profileProc
+        command: ["bash", "-c", "echo ok"]
+        onExited: (code, status) => {
+            // Recargar el avatar después de copiar la imagen
+            avatarImage.source = "";
+            avatarImage.source = "file://" + avatarPath + "?t=" + Date.now();
+        }
+    }
+
+    // Ruta estándar del perfil (compartida con hyprlock)
+    readonly property string avatarPath: StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/.config/hypr/profile.png"
+
     function runPowerCmd(cmdStr) {
         actionProc.command = ["bash", "-c", cmdStr];
         actionProc.running = true;
+    }
+
+    function changeProfilePhoto() {
+        profileProc.command = [
+            "bash", "-c",
+            "f=$(zenity --file-selection --title='Elige tu foto de perfil' --file-filter='Imágenes | *.png *.jpg *.jpeg *.webp' 2>/dev/null); " +
+            "[ -n \"$f\" ] && cp \"$f\" ~/.config/hypr/profile.png"
+        ];
+        profileProc.running = true;
     }
 
     Shortcut {
@@ -89,9 +113,11 @@ PanelWindow {
                 clip: true
 
                 Image {
+                    id: avatarImage
                     anchors.fill: parent
-                    source: "file:///home/kuro/.config/rofi/kurop_avatar.png"
+                    source: "file://" + win.avatarPath
                     fillMode: Image.PreserveAspectCrop
+                    cache: false
                 }
             }
 
@@ -203,6 +229,43 @@ PanelWindow {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: win.runPowerCmd("systemctl poweroff")
+                    }
+                }
+
+                // Separador
+                Rectangle {
+                    Layout.fillWidth: true
+                    implicitHeight: 1
+                    color: "#21262d"
+                    opacity: 0.6
+                }
+
+                // Cambiar foto de perfil
+                Rectangle {
+                    Layout.fillWidth: true
+                    implicitHeight: 38
+                    radius: 10
+                    color: "transparent"
+                    border.color: "#30363d"
+                    border.width: 1
+
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.leftMargin: 14
+                        spacing: 10
+                        Text { text: "🖼"; font.pixelSize: 13 }
+                        Text { text: "Cambiar foto de perfil"; font.pixelSize: 11; color: "#9399b2" }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: win.changeProfilePhoto()
+                    }
+
+                    Behavior on color { ColorAnimation { duration: 120 } }
+                    HoverHandler {
+                        onHoveredChanged: parent.color = hovered ? "#1a21262d" : "transparent"
                     }
                 }
             }

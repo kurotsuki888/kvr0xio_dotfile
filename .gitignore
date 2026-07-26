@@ -5,3 +5,14 @@
 .DS_Store
 *.tmp
 *.bak
+
+# Imágenes personales — cada usuario debe poner las suyas
+# La foto de perfil va en ~/.config/hypr/profile.png
+config/rofi/kurop_avatar.png
+config/rofi/*_avatar.png
+config/rofi/*_profile.*
+config/hypr/profile.png
+config/hypr/profile.*
+# Wallpapers personales (no se versiona el contenido, solo las carpetas)
+Vídeos/
+Imágenes/
