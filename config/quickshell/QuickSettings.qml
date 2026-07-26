@@ -24,11 +24,25 @@ PanelWindow {
         command: ["bash", "-c", "echo ok"]
     }
 
+    // Leer nombre del usuario del sistema
+    Process {
+        id: userProc
+        command: ["bash", "-c", "echo $USER"]
+        running: true
+        stdout: SplitParser {
+            onRead: data => {
+                let u = data.trim();
+                if (u.length > 0) win.currentUser = u;
+            }
+        }
+    }
+
     // Proceso para cambiar foto de perfil
     Process {
         id: profileProc
         command: ["bash", "-c", "echo ok"]
         onExited: (code, status) => {
+            // Forzar recarga limpia de la imagen
             avatarImage.source = "";
             avatarImage.source = "file://" + win.avatarPath + "?t=" + Date.now();
         }
@@ -36,6 +50,9 @@ PanelWindow {
 
     // Ruta estándar del perfil (compartida con Hyprlock)
     readonly property string avatarPath: StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/.config/hypr/profile.png"
+
+    // Nombre de usuario dinámico
+    property string currentUser: "usuario"
 
     function runCmd(cmdStr) {
         execProc.command = ["bash", "-c", cmdStr];
@@ -45,8 +62,12 @@ PanelWindow {
     function changeProfilePhoto() {
         profileProc.command = [
             "bash", "-c",
-            "f=$(zenity --file-selection --title='Elige tu foto de perfil' --file-filter='Imágenes | *.png *.jpg *.jpeg *.webp' 2>/dev/null); " +
-            "[ -n \"$f\" ] && cp \"$f\" ~/.config/hypr/profile.png"
+            // Acepta cualquier formato de imagen, siempre convierte a PNG sRGB con magick
+            "f=$(zenity --file-selection \\
+                --title='Elige tu foto de perfil' \\
+                --file-filter='Imágenes (jpg, png, webp, avif...)  | *.jpg *.jpeg *.png *.webp *.avif *.gif *.bmp *.tiff *.heic' \\
+                2>/dev/null); \\
+            [ -n \"$f\" ] && magick \"$f\" -colorspace sRGB -type TrueColorAlpha ~/.config/hypr/profile.png"
         ];
         profileProc.running = true;
     }
@@ -159,7 +180,7 @@ PanelWindow {
 
                 ColumnLayout {
                     spacing: 2
-                    Text { text: "kuro"; font.pixelSize: 15; font.bold: true; color: "#cdd6f4" }
+                    Text { id: usernameText; text: win.currentUser; font.pixelSize: 15; font.bold: true; color: "#cdd6f4" }
                     Text { text: "Ajustes Rápidos"; font.pixelSize: 12; color: "#89b4fa" }
                 }
 
