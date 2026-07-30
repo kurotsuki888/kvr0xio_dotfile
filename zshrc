@@ -210,7 +210,7 @@ function rmhtb() {
 
 #############################################################
 
-alias autonmap="bash /home/kuro/scripts-k/autonmap.sh"
+alias autonmap="bash $HOME/scripts-k/autonmap.sh"
 
 ######################3 ################
 ######## ################## ###############
@@ -236,13 +236,8 @@ ff() {
     fi
 }
 
-# Created by `pipx` on 2026-06-03 03:30:57
-export PATH="$PATH:/home/kuro/.local/bin"
-
-
-# Added by Antigravity CLI installer
-export PATH="/home/kuro/.local/bin:$PATH"
+# PATH personal
+export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/opt/john-jumbo/run:$PATH"
-alias john="$HOME/john-jumbo/run/john"
 alias john="$HOME/opt/john-jumbo/run/john"
 alias sqlmap="python3 $HOME/sqlmap-dev/sqlmap.py"

@@ -27,9 +27,8 @@ fi
 pkill -x swaybg 2>/dev/null || true
 sleep 0.2
 
-# Aplicar en ambos monitores en paralelo
-swaybg -o eDP-1   -i "$TARGET_WP" -m fill &
-swaybg -o HDMI-A-1 -i "$TARGET_WP" -m fill &
+# Aplicar en todos los monitores en paralelo
+swaybg -i "$TARGET_WP" -m fill &
 
 # Guardar el fondo actual
 echo "$TARGET_WP" > "$STATE_FILE"

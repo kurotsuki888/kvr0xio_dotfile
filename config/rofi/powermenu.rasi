@@ -52,7 +52,7 @@ dummy-r {
 icon-avatar {
     expand: false;
     background-color: transparent;
-    filename: "/home/kuro/.config/rofi/kurop_avatar.png";
+    filename: "~/.config/hypr/profile.png";
     size: 90px;
     border-radius: 45px;
 }
@@ -62,7 +62,7 @@ textbox-user {
     background-color: transparent;
     text-color: @fg-col;
     font: "JetBrains Mono Bold 12";
-    str: "kuro";
+    str: "Usuario";
     horizontal-align: 0.5;
     vertical-align: 0.5;
 }

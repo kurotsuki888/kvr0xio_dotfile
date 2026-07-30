@@ -55,7 +55,7 @@
     },
 
     "custom/mpris": {
-        "exec": "/home/kuro/.config/waybar/scripts/waybar-mpris.py",
+        "exec": "~/.config/waybar/scripts/waybar-mpris.py",
         "return-type": "json",
         "interval": 2,
         "on-click": "playerctl play-pause",
