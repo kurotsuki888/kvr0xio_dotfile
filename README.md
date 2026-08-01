@@ -1,9 +1,12 @@
+```text
  _                 ___       _             _       _    __ _ _      
 | | ____   ___ __ / _ \__  _(_) ___     __| | ___ | |_ / _(_) | ___ 
 | |/ /\ \ / / '__| | | \ \/ / |/ _ \   / _` |/ _ \| __| |_| | |/ _ \
 |   <  \ V /| |  | |_| |>  <| | (_) | | (_| | (_) | |_|  _| | |  __/
 |_|\_\  \_/ |_|   \___//_/\_\_|\___/   \__,_|\___/ \__|_| |_|_|\___|
-                                                                    
+```
+
+# 🦇 kvr0xio_dotfile
 
 Mis configuraciones personalizadas para **Hyprland (con soporte nativo Lua y .conf tradicional)**, **Waybar**, **Quickshell**, **Kitty**, **Rofi**, **Fastfetch**, **Btop**, **Cava**, **GTK-3/4**, **Zsh** y **Powerlevel10k**, listas para instalar en cualquier sistema con una sola línea.
 
@@ -166,7 +169,7 @@ El instalador detecta automáticamente tu distribución (Arch/CachyOS/Fedora/Deb
 | Capturas | `grim`, `slurp` |
 | Portapapeles | `wl-clipboard`, `cliphist` |
 | Red y BT | `network-manager-applet`, `blueman` |
-| Shell & Utiles | `zsh`, `fzf`, `fastfetch`, `btop`, `cava` |
+| Shell & Utiles | `zsh`, `fzf`, `fastfetch`, `btop`, `cava`, `lsd`, `bat` |
 | Tema GTK | `adw-gtk3` |
 
 ---

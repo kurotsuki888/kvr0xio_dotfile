@@ -19,10 +19,13 @@ NC='\033[0m' # No Color
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo -e "${BOLD}${CYAN}"
-echo "  _                    0_v_0       _        _        d---b "
-echo " | | \ \ / / | __ ___  |_ _| ___  __| | ___ | |_ / _|/ __/ "
-echo " | |/ / \ V /| '__/ _ \  | |/ _ \/ _\` |/ _ \|  _| |_ | (__ "
-echo " |___/   \_/ |_|  \___/ |___|\___/\__,_|\___/|_| |_(_)____|"
+cat << 'EOF'
+ _                 ___       _             _       _    __ _ _      
+| | ____   ___ __ / _ \__  _(_) ___     __| | ___ | |_ / _(_) | ___ 
+| |/ /\ \ / / '__| | | \ \/ / |/ _ \   / _` |/ _ \| __| |_| | |/ _ \
+|   <  \ V /| |  | |_| |>  <| | (_) | | (_| | (_) | |_|  _| | |  __/
+|_|\_\  \_/ |_|   \___//_/\_\_|\___/   \__,_|\___/ \__|_| |_|_|\___|
+EOF
 echo -e "${NC}"
 echo -e "${BOLD}${BLUE}🚀 Iniciando instalación de kvr0xio_dotfile...${NC}\n"
 
@@ -80,6 +83,8 @@ DEPENDENCIES=(
     "fastfetch:fastfetch:fastfetch:fastfetch"
     "btop:btop:btop:btop"
     "cava:cava:cava:cava"
+    "lsd:lsd:lsd:lsd"
+    "bat:bat:bat:bat"
     # --- Red y Bluetooth ---
     "nm-applet:network-manager-applet:network-manager-applet:network-manager-gnome"
     "blueman-manager:blueman:blueman:blueman"
