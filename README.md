@@ -1,4 +1,9 @@
-# 🦇 kvr0xio_dotfile
+ _                 ___       _             _       _    __ _ _      
+| | ____   ___ __ / _ \__  _(_) ___     __| | ___ | |_ / _(_) | ___ 
+| |/ /\ \ / / '__| | | \ \/ / |/ _ \   / _` |/ _ \| __| |_| | |/ _ \
+|   <  \ V /| |  | |_| |>  <| | (_) | | (_| | (_) | |_|  _| | |  __/
+|_|\_\  \_/ |_|   \___//_/\_\_|\___/   \__,_|\___/ \__|_| |_|_|\___|
+                                                                    
 
 Mis configuraciones personalizadas para **Hyprland (con soporte nativo Lua y .conf tradicional)**, **Waybar**, **Quickshell**, **Kitty**, **Rofi**, **Fastfetch**, **Btop**, **Cava**, **GTK-3/4**, **Zsh** y **Powerlevel10k**, listas para instalar en cualquier sistema con una sola línea.
 
