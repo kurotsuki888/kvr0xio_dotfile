@@ -1,0 +1,110 @@
+/* Estilo CSS personalizado para SwayNC en Hyprland */
+
+* {
+  font-family: "Inter", "Roboto", "Ubuntu", sans-serif;
+  font-size: 14px;
+}
+
+:root {
+  --cc-bg: rgba(20, 20, 25, 0.85);
+  --noti-border-color: rgba(179, 0, 0, 0.4);
+  --noti-bg: rgba(30, 30, 40, 0.9);
+  --noti-bg-hover: rgba(45, 45, 60, 0.95);
+  --noti-close-bg: rgba(255, 255, 255, 0.1);
+  --noti-close-bg-hover: rgba(179, 0, 0, 0.6);
+  --text-color: #ffffff;
+  --text-color-disabled: #888888;
+  --bg-selected: #b30000;
+  --border-radius: 12px;
+}
+
+notificationwindow, blankwindow {
+  background: transparent;
+}
+
+/* Panel de Notificaciones (Control Center) */
+.control-center {
+  background: var(--cc-bg);
+  border: 2px solid var(--noti-border-color);
+  border-radius: var(--border-radius);
+  padding: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+}
+
+.control-center .widget-title {
+  color: var(--text-color);
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.control-center .widget-title > button {
+  background: rgba(179, 0, 0, 0.3);
+  color: #ffffff;
+  border: 1px solid rgba(179, 0, 0, 0.6);
+  border-radius: 8px;
+  padding: 4px 10px;
+}
+
+.control-center .widget-title > button:hover {
+  background: rgba(179, 0, 0, 0.7);
+}
+
+/* Notificación Flotante (Popup) */
+.notification-row {
+  background: none;
+  outline: none;
+}
+
+.notification-row .notification-background .notification {
+  border-radius: var(--border-radius);
+  border: 1px solid var(--noti-border-color);
+  padding: 10px 14px;
+  background: var(--noti-bg);
+  color: var(--text-color);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  margin-bottom: 8px;
+}
+
+.notification-row .notification-background .notification:hover {
+  background: var(--noti-bg-hover);
+  border-color: rgba(179, 0, 0, 0.8);
+}
+
+.notification-content .summary {
+  font-weight: bold;
+  font-size: 15px;
+  color: #ffffff;
+}
+
+.notification-content .body {
+  font-size: 13px;
+  color: #dddddd;
+  margin-top: 4px;
+}
+
+.close-button {
+  background: var(--noti-close-bg);
+  color: var(--text-color);
+  border-radius: 50%;
+  padding: 2px;
+  border: none;
+}
+
+.close-button:hover {
+  background: var(--noti-close-bg-hover);
+}
+
+/* Widgets */
+.widget-dnd {
+  margin: 8px 0;
+  color: var(--text-color);
+}
+
+.widget-mpris {
+  background: rgba(40, 40, 50, 0.7);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}

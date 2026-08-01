@@ -13,10 +13,10 @@ CHOSEN=$(echo -e "$OPTIONS" | rofi -dmenu -theme "$THEME" -p "Sistema")
 
 case "$CHOSEN" in
     "$LOCK")
-        hyprlock
+        i3lock || hyprlock || true
         ;;
     "$LOGOUT")
-        hyprctl dispatch exit
+        i3-msg exit 2>/dev/null || hyprctl dispatch exit 2>/dev/null
         ;;
     "$REBOOT")
         systemctl reboot

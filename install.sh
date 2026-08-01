@@ -222,6 +222,7 @@ fi
 # Hacer ejecutables todos los scripts
 if [ -d "$HOME/.config/hypr/scripts" ]; then
     chmod +x "$HOME/.config/hypr/scripts/"*.sh 2>/dev/null || true
+    chmod +x "$HOME/.config/hypr/scripts/"*.py 2>/dev/null || true
 fi
 if [ -d "$HOME/.config/waybar/scripts" ]; then
     chmod +x "$HOME/.config/waybar/scripts/"*.sh 2>/dev/null || true

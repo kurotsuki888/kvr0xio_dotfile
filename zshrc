@@ -245,3 +245,10 @@ alias sqlmap="python3 $HOME/sqlmap-dev/sqlmap.py"
 
 # Added by Antigravity CLI installer
 export PATH="/home/kuro/.local/bin:$PATH"
+
+# pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+    [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init -)"
+alias whatsie='QT_QPA_PLATFORM=xcb whatsie'
+export PATH="$HOME/.local/share/gem/ruby/3.4.0/bin:$PATH"

@@ -49,7 +49,7 @@ hl.on("hyprland.start", function ()
     hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
     hl.exec_cmd("sleep 1 && (/usr/lib/xdg-desktop-portal-hyprland || /usr/libexec/xdg-desktop-portal-hyprland)")
     hl.exec_cmd("sleep 2 && (/usr/lib/xdg-desktop-portal || /usr/libexec/xdg-desktop-portal)")
-    hl.exec_cmd("sleep 2 && whatsie")
+    hl.exec_cmd("sleep 2 && env QT_QPA_PLATFORM=xcb whatsie")
 end)
 
 
