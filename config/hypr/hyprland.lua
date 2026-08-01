@@ -59,6 +59,7 @@ end)
 hl.config({
     input = {
         kb_layout = "latam",
+        numlock_by_default = false,
         follow_mouse = 1,
         touchpad = {
             natural_scroll = false,
@@ -142,41 +143,41 @@ hl.bind(mainMod .. " + PRINT", hl.dsp.exec_cmd("grim - | wl-copy"))
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("grim -g \"$(slurp)\" ~/Pictures/screenshot_$(date +%Y%m%d_%H%M%S).png"))
 
 -- Foco entre ventanas
-hl.bind(mainMod .. " + left",  hl.dsp.exec_raw("movefocus l"))
-hl.bind(mainMod .. " + right", hl.dsp.exec_raw("movefocus r"))
-hl.bind(mainMod .. " + up",    hl.dsp.exec_raw("movefocus u"))
-hl.bind(mainMod .. " + down",  hl.dsp.exec_raw("movefocus d"))
-hl.bind(mainMod .. " + H",     hl.dsp.exec_raw("movefocus l"))
-hl.bind(mainMod .. " + L",     hl.dsp.exec_raw("movefocus r"))
-hl.bind(mainMod .. " + K",     hl.dsp.exec_raw("movefocus u"))
-hl.bind(mainMod .. " + J",     hl.dsp.exec_raw("movefocus d"))
+hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "l" }))
+hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "r" }))
+hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "u" }))
+hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "d" }))
+hl.bind(mainMod .. " + H",     hl.dsp.focus({ direction = "l" }))
+hl.bind(mainMod .. " + L",     hl.dsp.focus({ direction = "r" }))
+hl.bind(mainMod .. " + K",     hl.dsp.focus({ direction = "u" }))
+hl.bind(mainMod .. " + J",     hl.dsp.focus({ direction = "d" }))
 
 -- Mover ventanas
-hl.bind(mainMod .. " + SHIFT + left",  hl.dsp.exec_raw("movewindow l"))
-hl.bind(mainMod .. " + SHIFT + right", hl.dsp.exec_raw("movewindow r"))
-hl.bind(mainMod .. " + SHIFT + up",    hl.dsp.exec_raw("movewindow u"))
-hl.bind(mainMod .. " + SHIFT + down",  hl.dsp.exec_raw("movewindow d"))
+hl.bind(mainMod .. " + SHIFT + left",  hl.dsp.window.move({ direction = "l" }))
+hl.bind(mainMod .. " + SHIFT + right", hl.dsp.window.move({ direction = "r" }))
+hl.bind(mainMod .. " + SHIFT + up",    hl.dsp.window.move({ direction = "u" }))
+hl.bind(mainMod .. " + SHIFT + down",  hl.dsp.window.move({ direction = "d" }))
 
 -- Redimensionar ventanas
-hl.bind(mainMod .. " + CTRL + left",  hl.dsp.exec_raw("resizeactive -40 0"))
-hl.bind(mainMod .. " + CTRL + right", hl.dsp.exec_raw("resizeactive 40 0"))
-hl.bind(mainMod .. " + CTRL + up",    hl.dsp.exec_raw("resizeactive 0 -40"))
-hl.bind(mainMod .. " + CTRL + down",  hl.dsp.exec_raw("resizeactive 0 40"))
+hl.bind(mainMod .. " + CTRL + left",  hl.dsp.exec_raw("resizeactive", "-40 0"))
+hl.bind(mainMod .. " + CTRL + right", hl.dsp.exec_raw("resizeactive", "40 0"))
+hl.bind(mainMod .. " + CTRL + up",    hl.dsp.exec_raw("resizeactive", "0 -40"))
+hl.bind(mainMod .. " + CTRL + down",  hl.dsp.exec_raw("resizeactive", "0 40"))
 
 -- Workspaces
 for i = 1, 10 do
     local key = i % 10
-    hl.bind(mainMod .. " + " .. key,         hl.dsp.exec_raw("workspace " .. i))
-    hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.exec_raw("movetoworkspace " .. i))
+    hl.bind(mainMod .. " + " .. key,         hl.dsp.focus({ workspace = i }))
+    hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
 end
 
 -- Minimizar (workspace especial)
-hl.bind(mainMod .. " + M",         hl.dsp.exec_raw("movetoworkspacesilent special:minimized"))
-hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_raw("togglespecialworkspace minimized"))
+hl.bind(mainMod .. " + M",         function() hl.dispatch(hl.dsp.exec_raw("movetoworkspacesilent", "special:minimized")) end)
+hl.bind(mainMod .. " + SHIFT + M", function() hl.dispatch(hl.dsp.exec_raw("togglespecialworkspace", "minimized")) end)
 
 -- Mouse binds
-hl.bind(mainMod .. " + mouse_down", hl.dsp.exec_raw("workspace e+1"))
-hl.bind(mainMod .. " + mouse_up",   hl.dsp.exec_raw("workspace e-1"))
+hl.bind(mainMod .. " + mouse_down", function() hl.dispatch(hl.dsp.exec_raw("workspace", "e+1")) end)
+hl.bind(mainMod .. " + mouse_up",   function() hl.dispatch(hl.dsp.exec_raw("workspace", "e-1")) end)
 
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
