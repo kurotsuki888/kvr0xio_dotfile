@@ -1,6 +1,6 @@
 # 🦇 kvr0xio_dotfile
 
-Mis configuraciones personalizadas para **Hyprland**, **Waybar**, **Quickshell**, **Kitty**, **Rofi**, **Zsh** y **Powerlevel10k**, listas para instalar en cualquier sistema con una sola línea.
+Mis configuraciones personalizadas para **Hyprland (con soporte nativo Lua y .conf tradicional)**, **Waybar**, **Quickshell**, **Kitty**, **Rofi**, **Fastfetch**, **Btop**, **Cava**, **GTK-3/4**, **Zsh** y **Powerlevel10k**, listas para instalar en cualquier sistema con una sola línea.
 
 ---
 
@@ -8,12 +8,16 @@ Mis configuraciones personalizadas para **Hyprland**, **Waybar**, **Quickshell**
 
 | Componente | Ruta | Descripción |
 |---|---|---|
-| **Hyprland** | `~/.config/hypr` | Compositor Wayland — ventanas, animaciones, atajos y reglas |
+| **Hyprland (Lua)** | `~/.config/hypr/hyprland.lua` | Configuración oficial en formato Lua para Hyprland 0.56+ / 0.57+ |
+| **Hyprland (Conf)** | `~/.config/hypr/hyprland.conf` | Backup en formato tradicional .conf |
 | **Hyprlock** | `~/.config/hypr/hyprlock.conf` | Pantalla de bloqueo con foto de perfil y reloj |
 | **Waybar** | `~/.config/waybar` | Barra superior con módulos y scripts interactivos |
 | **Quickshell** | `~/.config/quickshell` | Powermenu, Wi-Fi, Bluetooth, Notificaciones, Calendario |
 | **Kitty** | `~/.config/kitty` | Emulador de terminal configurado |
 | **Rofi** | `~/.config/rofi` | Lanzador de aplicaciones y menús gráficos |
+| **Fastfetch** | `~/.config/fastfetch` | Resumen del sistema con banner ASCII |
+| **Btop & Cava** | `~/.config/btop`, `~/.config/cava` | Monitor del sistema y visualizador de audio en terminal |
+| **Temas GTK** | `~/.config/gtk-3.0`, `~/.config/gtk-4.0` | Estilos oscuros `adw-gtk3-dark` |
 | **Zsh + p10k** | `~/.zshrc`, `~/.p10k.zsh` | Shell con Powerlevel10k y plugins |
 
 ---
@@ -26,7 +30,7 @@ cd ~/kvr0xio_dotfile
 ./install.sh
 ```
 
-El instalador verifica e instala automáticamente las dependencias faltantes, crea las carpetas necesarias y te avisa si falta la foto de perfil.
+El instalador verifica e instala automáticamente las dependencias faltantes, realiza respaldos de configuraciones previas, crea las carpetas necesarias y asegura que los scripts tengan permisos de ejecución.
 
 ---
 
@@ -38,8 +42,8 @@ El instalador crea las siguientes carpetas automáticamente:
 |---|---|
 | `~/Vídeos/Wallpapers/` | **Wallpapers animados** — coloca aquí tus archivos `.mp4`, `.webm`, `.gif` para usar con `mpvpaper`. Se activan con `Super + Alt + W`. |
 | `~/Imágenes/Wallpapers/` | **Wallpapers estáticos** — coloca aquí tus imágenes `.png`, `.jpg`. Se activan con el selector de fondos (`Super + Alt + W`). |
-| `~/Imágenes/Screenshots/` | **Capturas de pantalla** — destino de `Super + Shift + S` (captura con selección de área). |
-| `~/.config/hypr/` | **Configuración de Hyprland** — incluye `profile.png` (foto de perfil usada en powermenu e hyprlock). |
+| `~/Pictures/screenshot/` | **Capturas de pantalla** — destino de `Super + Shift + S` (captura con selección de área). |
+| `~/.config/hypr/` | **Configuración de Hyprland** — incluye `hyprland.lua`, `hyprland.conf`, scripts y `profile.png`. |
 
 > **Foto de perfil**: coloca tu imagen en `~/.config/hypr/profile.png`.  
 > También puedes cambiarla desde el **Powermenu → 🖼 Cambiar foto de perfil**.
@@ -122,7 +126,7 @@ La foto de perfil es **única y compartida** entre el Powermenu y la pantalla de
 |---|---|
 | `Print` | Capturar área seleccionada → portapapeles |
 | `Super + Print` | Capturar pantalla completa → portapapeles |
-| `Super + Shift + S` | Capturar área → guardar en `~/Imágenes/Screenshots/` |
+| `Super + Shift + S` | Capturar área → guardar en `~/Pictures/screenshot/` |
 
 ### Utilidades
 
@@ -141,25 +145,24 @@ La foto de perfil es **única y compartida** entre el Powermenu y la pantalla de
 
 ## 🔧 Requisitos del Sistema
 
-El instalador detecta automáticamente tu distribución (Fedora/Arch/Debian) e instala los paquetes faltantes.
+El instalador detecta automáticamente tu distribución (Arch/CachyOS/Fedora/Debian) e instala los paquetes faltantes.
 
 **Dependencias principales:**
 
 | Categoría | Paquetes |
 |---|---|
 | Compositor | `hyprland`, `hyprlock`, `hyprpaper`, `uwsm` |
-| Barra y shell | `waybar`, `quickshell` |
+| Barra y shell | `waybar`, `quickshell`, `swaync` |
 | Lanzadores | `rofi-wayland`, `zenity` |
-| Terminal | `kitty` |
+| Terminal y apps | `kitty`, `whatsie`, `thunar`, `firefox` |
 | Fondo de pantalla | `swaybg`, `mpvpaper`, `mpv` |
 | Audio | `pipewire`, `wireplumber`, `pavucontrol` |
 | Multimedia | `playerctl`, `ffmpeg` |
 | Capturas | `grim`, `slurp` |
 | Portapapeles | `wl-clipboard`, `cliphist` |
 | Red y BT | `network-manager-applet`, `blueman` |
-| Shell | `zsh`, `fzf`, `lsd`, `bat`, `yazi`, `fastfetch` |
+| Shell & Utiles | `zsh`, `fzf`, `fastfetch`, `btop`, `cava` |
 | Tema GTK | `adw-gtk3` |
-| Utiles | `git`, `curl`, `jq`, `socat`, `brightnessctl` |
 
 ---
 
@@ -171,4 +174,4 @@ Después de instalar, cambia tu shell a Zsh si no lo has hecho:
 chsh -s $(which zsh)
 ```
 
-Luego reinicia la sesión para que todos los cambios tomen efecto.
+Luego reinicia la sesión para aplicar todos los cambios.

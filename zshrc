@@ -241,3 +241,7 @@ export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/opt/john-jumbo/run:$PATH"
 alias john="$HOME/opt/john-jumbo/run/john"
 alias sqlmap="python3 $HOME/sqlmap-dev/sqlmap.py"
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/kuro/.local/bin:$PATH"
