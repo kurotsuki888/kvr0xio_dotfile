@@ -7,14 +7,14 @@
 hl.monitor({
     output   = "eDP-1",
     mode     = "1920x1080@60.027",
-    position = "1680x0",
+    position = "0x0",
     scale    = "1",
 })
 
 hl.monitor({
     output   = "HDMI-A-1",
     mode     = "1680x1050@59.883",
-    position = "0x0",
+    position = "1920x0",
     scale    = "1",
 })
 
@@ -130,6 +130,7 @@ hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd("rofi -show drun -show-icons"))
 
 -- Gestión de ventanas
+hl.bind("ALT + TAB", hl.dsp.exec_cmd("~/.config/hypr/scripts/rofi-window.sh"))
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.exec_cmd("hyprctl dispatch exit"))
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen())
@@ -172,27 +173,28 @@ for i = 1, 10 do
 end
 
 -- Minimizar (workspace especial)
-hl.bind(mainMod .. " + M",         function() hl.dispatch(hl.dsp.exec_raw("movetoworkspacesilent", "special:minimized")) end)
-hl.bind(mainMod .. " + SHIFT + M", function() hl.dispatch(hl.dsp.exec_raw("togglespecialworkspace", "minimized")) end)
+hl.bind(mainMod .. " + M",         hl.dsp.exec_cmd("~/.config/hypr/scripts/minimize.sh minimize"))
+hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("~/.config/hypr/scripts/minimize.sh toggle"))
+hl.bind(mainMod .. " + CTRL + M",  hl.dsp.exec_cmd("~/.config/hypr/scripts/minimize.sh restore"))
 
 -- Mouse binds
-hl.bind(mainMod .. " + mouse_down", function() hl.dispatch(hl.dsp.exec_raw("workspace", "e+1")) end)
-hl.bind(mainMod .. " + mouse_up",   function() hl.dispatch(hl.dsp.exec_raw("workspace", "e-1")) end)
+hl.bind(mainMod .. " + mouse_down", hl.dsp.exec_raw("workspace", "e+1"))
+hl.bind(mainMod .. " + mouse_up",   hl.dsp.exec_raw("workspace", "e-1"))
 
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
--- Multimedia keys
-hl.bind("XF86AudioRaiseVolume",  hl.dsp.exec_cmd("wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true })
-hl.bind("XF86AudioLowerVolume",  hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),        { locked = true })
-hl.bind("XF86AudioMute",         hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),       { locked = true })
-hl.bind("XF86AudioMicMute",      hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),     { locked = true })
-hl.bind("XF86AudioPlay",         hl.dsp.exec_cmd("playerctl play-pause"),                             { locked = true })
-hl.bind("XF86AudioPause",        hl.dsp.exec_cmd("playerctl play-pause"),                             { locked = true })
-hl.bind("XF86AudioNext",         hl.dsp.exec_cmd("playerctl next"),                                   { locked = true })
-hl.bind("XF86AudioPrev",         hl.dsp.exec_cmd("playerctl previous"),                               { locked = true })
-hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("brightnessctl set 5%+"),                            { locked = true })
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"),                            { locked = true })
+-- Multimedia keys (con OSD y animaciones)
+hl.bind("XF86AudioRaiseVolume",  hl.dsp.exec_cmd("~/.config/hypr/scripts/volume.sh up"),         { locked = true })
+hl.bind("XF86AudioLowerVolume",  hl.dsp.exec_cmd("~/.config/hypr/scripts/volume.sh down"),       { locked = true })
+hl.bind("XF86AudioMute",         hl.dsp.exec_cmd("~/.config/hypr/scripts/volume.sh mute"),       { locked = true })
+hl.bind("XF86AudioMicMute",      hl.dsp.exec_cmd("~/.config/hypr/scripts/volume.sh mic-mute"),   { locked = true })
+hl.bind("XF86AudioPlay",         hl.dsp.exec_cmd("playerctl play-pause"),                         { locked = true })
+hl.bind("XF86AudioPause",        hl.dsp.exec_cmd("playerctl play-pause"),                         { locked = true })
+hl.bind("XF86AudioNext",         hl.dsp.exec_cmd("playerctl next"),                               { locked = true })
+hl.bind("XF86AudioPrev",         hl.dsp.exec_cmd("playerctl previous"),                           { locked = true })
+hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("~/.config/hypr/scripts/brightness.sh up"),     { locked = true })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("~/.config/hypr/scripts/brightness.sh down"),   { locked = true })
 
 -- Bloqueo de pantalla
 hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exec_cmd("hyprlock"))

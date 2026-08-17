@@ -9,7 +9,7 @@ PanelWindow {
     id: win
     visible: true
     implicitWidth: 360
-    implicitHeight: 570
+    implicitHeight: 635
     color: "transparent"
 
     WlrLayershell.layer: WlrLayer.Top
@@ -19,9 +19,24 @@ PanelWindow {
     margins.top: 36
     margins.right: 12
 
+    property bool isPowerSaver: false
+
     Process {
         id: execProc
         command: ["bash", "-c", "echo ok"]
+    }
+
+    // Proceso para leer perfil de energía actual
+    Process {
+        id: powerProfileProc
+        command: ["bash", "-c", "powerprofilesctl get"]
+        running: true
+        stdout: SplitParser {
+            onRead: data => {
+                let p = data.trim();
+                win.isPowerSaver = (p === "power-saver");
+            }
+        }
     }
 
     // Leer $HOME del sistema (más fiable que StandardPaths en Quickshell)
@@ -117,8 +132,18 @@ PanelWindow {
         profileProc.running = true;
     }
 
+    function togglePowerSaver() {
+        if (win.isPowerSaver) {
+            win.runCmd("powerprofilesctl set performance");
+            win.isPowerSaver = false;
+        } else {
+            win.runCmd("powerprofilesctl set power-saver");
+            win.isPowerSaver = true;
+        }
+    }
+
     function launchApp(cmdStr) {
-        execProc.command = ["bash", "-c", "hyprctl dispatch exec \"" + cmdStr + "\""];
+        execProc.command = ["bash", "-c", cmdStr + " &"];
         execProc.running = true;
         closeTimer.start();
     }
@@ -279,7 +304,7 @@ PanelWindow {
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: win.launchApp("env GTK_THEME=Adwaita:dark pavucontrol")
+                            onClicked: win.launchApp("env GTK_THEME=Adwaita:dark pavucontrol -t 3")
                         }
                     }
                 }
@@ -354,6 +379,75 @@ PanelWindow {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
                             onClicked: win.launchApp("~/.config/waybar/scripts/toggle-quickshell.sh ~/.config/quickshell/ControlCenter.qml")
+                        }
+                    }
+                }
+            }
+
+            // Battery Saver / Performance Card
+            Rectangle {
+                Layout.fillWidth: true
+                implicitHeight: 52
+                radius: 10
+                color: "#1e1e2e"
+                border.color: win.isPowerSaver ? "#a6e3a1" : "#313244"
+                border.width: 1
+                Behavior on border.color { ColorAnimation { duration: 150 } }
+
+                MouseArea {
+                    id: powerCardMouse
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked: win.togglePowerSaver()
+                }
+
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 10
+
+                    Text {
+                        text: win.isPowerSaver ? "󰌪" : "󰓅"
+                        font.pixelSize: 18
+                        color: win.isPowerSaver ? "#a6e3a1" : "#fab387"
+                    }
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 2
+                        Text { 
+                            text: "Ahorro de batería"
+                            font.pixelSize: 12
+                            font.bold: true
+                            color: "#cdd6f4"
+                            elide: Text.ElideRight
+                        }
+                        Text { 
+                            text: win.isPowerSaver ? "Ahorro activado" : "Máximo rendimiento"
+                            font.pixelSize: 10
+                            color: win.isPowerSaver ? "#a6e3a1" : "#a6adc8"
+                            elide: Text.ElideRight
+                        }
+                    }
+
+                    // Switch Toggle
+                    Rectangle {
+                        implicitWidth: 44
+                        implicitHeight: 24
+                        radius: 12
+                        color: win.isPowerSaver ? "#a6e3a1" : "#313244"
+                        Behavior on color { ColorAnimation { duration: 150 } }
+
+                        Rectangle {
+                            width: 18
+                            height: 18
+                            radius: 9
+                            color: win.isPowerSaver ? "#11111b" : "#cdd6f4"
+                            anchors.verticalCenter: parent.verticalCenter
+                            x: win.isPowerSaver ? parent.width - width - 3 : 3
+                            Behavior on x { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+                            Behavior on color { ColorAnimation { duration: 150 } }
                         }
                     }
                 }

@@ -224,6 +224,13 @@ if [ -d "$DOTFILES_DIR/config" ]; then
     done
 fi
 
+if [ -d "$DOTFILES_DIR/local/bin" ]; then
+    echo -e "${GREEN}  -> Instalando ~/.local/bin/...${NC}"
+    mkdir -p "$HOME/.local/bin"
+    cp -rf "$DOTFILES_DIR/local/bin/"* "$HOME/.local/bin/"
+    chmod +x "$HOME/.local/bin/"* 2>/dev/null || true
+fi
+
 # Hacer ejecutables todos los scripts
 if [ -d "$HOME/.config/hypr/scripts" ]; then
     chmod +x "$HOME/.config/hypr/scripts/"*.sh 2>/dev/null || true

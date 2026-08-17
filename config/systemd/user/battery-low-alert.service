@@ -1,0 +1,17 @@
+[Unit]
+Description=Alerta emergente de bateria baja
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+Environment=DISPLAY=:1
+Environment=WAYLAND_DISPLAY=wayland-1
+Environment=XDG_RUNTIME_DIR=/run/user/%U
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/%U/bus
+ExecStart=%h/.local/bin/battery-low-alert.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

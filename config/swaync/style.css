@@ -108,3 +108,24 @@ notificationwindow, blankwindow {
   margin-bottom: 10px;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* Barra de progreso para OSD (Volumen y Brillo) */
+progressbar {
+  background: transparent;
+  min-height: 8px;
+  border-radius: 6px;
+  margin-top: 6px;
+}
+
+progressbar trough {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  min-height: 8px;
+}
+
+progressbar progress {
+  background: linear-gradient(90deg, #89b4fa, #b4befe);
+  border-radius: 6px;
+  min-height: 8px;
+}
+
