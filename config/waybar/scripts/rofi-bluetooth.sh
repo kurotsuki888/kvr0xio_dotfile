@@ -26,8 +26,9 @@ toggle_power() {
 }
 
 scan_devices() {
-    notify-send "Bluetooth" "Buscando dispositivos (5s)..." -i bluetooth-active
-    bluetoothctl --timeout 5 scan on >/dev/null 2>&1
+    notify-send "Bluetooth" "Buscando dispositivos (8s)..." -i bluetooth-active
+    (echo "scan on"; sleep 8; echo "scan off") | bluetoothctl >/dev/null 2>&1
+    notify-send "Bluetooth" "Búsqueda completada" -i bluetooth-active
 }
 
 toggle_connect() {
@@ -37,6 +38,11 @@ toggle_connect() {
         bluetoothctl disconnect "$mac" >/dev/null 2>&1
         notify-send "Bluetooth" "Desconectado: $name"
     else
+        notify-send "Bluetooth" "Conectando a $name..."
+        if ! bluetoothctl info "$mac" | grep -q "Paired: yes"; then
+            notify-send "Bluetooth" "Emparejando $name..."
+            (echo "agent on"; echo "default-agent"; echo "pair $mac"; sleep 4; echo "trust $mac") | bluetoothctl >/dev/null 2>&1
+        fi
         bluetoothctl connect "$mac" >/dev/null 2>&1
         if is_connected "$mac"; then
             notify-send "Bluetooth" "Conectado: $name"

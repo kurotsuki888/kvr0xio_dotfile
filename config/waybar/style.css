@@ -69,14 +69,18 @@ window#waybar {
 }
 
 /* Espaciado para los módulos de la derecha y centro */
-#custom-mpris, #pulseaudio, #network, #battery, #tray, #clock {
+#custom-mpris, #pulseaudio, #network, #custom-vpn, #battery, #tray, #clock {
     padding: 0 12px;
     background-color: transparent; /* Mata los fondos de colores */
     color: #cdd6f4;
 }
 
+#custom-vpn {
+    color: #89b4fa;
+}
+
 #custom-mpris {
-    color: #a6e3a1;
+    color: #f38ba8;
     transition: color 0.2s ease-in-out;
 }
 
@@ -85,7 +89,7 @@ window#waybar {
 }
 
 #custom-mpris:hover {
-    color: #89b4fa;
+    color: #ff757f;
 }
 
 /* Estilos de los Workspaces */

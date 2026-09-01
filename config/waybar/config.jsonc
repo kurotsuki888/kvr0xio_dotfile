@@ -1,7 +1,7 @@
 {
     "layer": "top",
     "position": "top",
-    "modules-left": ["hyprland/workspaces", "wlr/taskbar"],
+    "modules-left": ["hyprland/workspaces", "wlr/taskbar", "custom/mpris"],
 
     "wlr/taskbar": {
         "format": "{icon}",
@@ -15,12 +15,12 @@
         "all-outputs": false
     },
     "modules-center": ["custom/date", "custom/time"],
-    "modules-right": ["custom/mpris", "network", "battery", "tray", "custom/notification", "custom/controlcenter"],
+    "modules-right": ["network", "custom/vpn", "battery", "tray", "custom/notification", "custom/controlcenter"],
 
     "custom/controlcenter": {
         "format": "⚙",
         "on-click": "~/.config/waybar/scripts/toggle-quickshell.sh ~/.config/quickshell/QuickSettings.qml",
-        "tooltip-format": "Ajustes Rápidos (Volumen, Brillo, Bluetooth, Sistema)"
+        "tooltip-format": "Ajustes Rápidos y Sistema"
     },
 
     "custom/notification": {
@@ -71,7 +71,6 @@
     "custom/mpris": {
         "exec": "~/.config/waybar/scripts/waybar-mpris.py",
         "return-type": "json",
-        "interval": 2,
         "on-click": "playerctl play-pause",
         "on-click-right": "playerctl next",
         "on-click-middle": "playerctl previous"
@@ -104,6 +103,15 @@
         "tooltip-format": "Gateway: {gwaddr}",
         "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
         "on-click": "~/.config/waybar/scripts/toggle-quickshell.sh ~/.config/quickshell/ControlCenter.qml"        
+    },
+
+    "custom/vpn": {
+        "format": "{}",
+        "exec": "~/.config/waybar/scripts/waybar-vpn.py",
+        "return-type": "json",
+        "interval": 2,
+        "tooltip": true,
+        "on-click": "~/.config/waybar/scripts/vpnmenu.py"
     },
 
      "bluetooth": {

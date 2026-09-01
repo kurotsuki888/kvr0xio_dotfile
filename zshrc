@@ -73,11 +73,10 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
 # Which plugins would you like to load?
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions)
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
+
+# Disable insecure completion directory check (prevents warnings when running as root)
+ZSH_DISABLE_COMPFIX="true"
 
 source $ZSH/oh-my-zsh.sh
 
@@ -122,6 +121,10 @@ function y() {
 
 # Abrir yazi con Alt+Shift+Derecha
 bindkey -s '^[[1;4C' 'y\n'
+
+# Moverse por palabras completas con Shift + Flechas Izquierda / Derecha
+bindkey '^[[1;2D' backward-word
+bindkey '^[[1;2C' forward-word
 
 ###############################
 
@@ -248,7 +251,38 @@ export PATH="/home/kuro/.local/bin:$PATH"
 
 # pyenv
 export PYENV_ROOT="$HOME/.pyenv"
-    [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+if command -v pyenv &>/dev/null; then
     eval "$(pyenv init -)"
+fi
 alias whatsie='QT_QPA_PLATFORM=xcb whatsie'
 export PATH="$HOME/.local/share/gem/ruby/3.4.0/bin:$PATH"
+
+# ==============================================================================
+# Customización de colores para zsh-syntax-highlighting y zsh-autosuggestions
+# Soluciona el problema de texto/variables en negro ($VAR, comentarios, etc.)
+# ==============================================================================
+typeset -g -A ZSH_HIGHLIGHT_STYLES
+
+# Variables y expresiones con $
+ZSH_HIGHLIGHT_STYLES[comment]='fg=#a6adc8,bold'                        # Variables no resueltas ($VAR) y comentarios (#)
+ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]='fg=#b08ee0,bold'         # Cadenas estilo $'...'
+ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]='fg=#78bacc,bold'  # Variables dentro de comillas dobles "$VAR"
+ZSH_HIGHLIGHT_STYLES[back-dollar-quoted-argument]='fg=#78bacc,bold'     # Escapes \$VAR
+ZSH_HIGHLIGHT_STYLES[assign-dollar-quoted-argument]='fg=#b08ee0,bold'  # Asignaciones VAR=$'...'
+ZSH_HIGHLIGHT_STYLES[assign-dollar-double-quoted-argument]='fg=#78bacc,bold' # Asignaciones VAR="$VAR"
+
+# Sustitución de comandos $(...) y `...`
+ZSH_HIGHLIGHT_STYLES[command-substitution]='fg=#c98ded,bold'           # $(comando)
+ZSH_HIGHLIGHT_STYLES[command-substitution-delimiter]='fg=#c98ded,bold' # Delimitadores de $(...)
+ZSH_HIGHLIGHT_STYLES[command-substitution-quoted]='fg=#c98ded,bold'    # "$(comando)"
+ZSH_HIGHLIGHT_STYLES[command-substitution-delimiter-quoted]='fg=#c98ded,bold'
+ZSH_HIGHLIGHT_STYLES[command-substitution-delimiter-unquoted]='fg=#c98ded,bold'
+ZSH_HIGHLIGHT_STYLES[process-substitution]='fg=#c98ded,bold'           # <(comando) o >(comando)
+ZSH_HIGHLIGHT_STYLES[process-substitution-delimiter]='fg=#c98ded,bold'
+
+# Autosugerencias (zsh-autosuggestions)
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#78738a'                           # Color gris suave visible en fondo oscuro
+
+
+[[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"

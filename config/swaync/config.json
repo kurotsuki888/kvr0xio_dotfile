@@ -62,12 +62,27 @@
   "widgets": [
     "title",
     "dnd",
+    "buttons-grid",
     "mpris",
     "volume",
     "backlight",
     "notifications"
   ],
   "widget-config": {
+    "buttons-grid": {
+      "actions": [
+        {
+          "label": "󰂚 Silenciar Apps",
+          "type": "normal",
+          "command": "/home/kuro/.config/swaync/dnd-app-manager.py"
+        },
+        {
+          "label": "⚙ Ajustes Sistema",
+          "type": "normal",
+          "command": "/home/kuro/.local/bin/hypr-control-center"
+        }
+      ]
+    },
     "notifications": {
       "vexpand": true
     },

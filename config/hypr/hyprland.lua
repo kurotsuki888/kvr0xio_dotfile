@@ -5,18 +5,19 @@
 ---- MONITORS ----
 ------------------
 hl.monitor({
-    output   = "eDP-1",
-    mode     = "1920x1080@60.027",
+    output   = "HDMI-A-1",
+    mode     = "1680x1050@59.883",
     position = "0x0",
     scale    = "1",
 })
 
 hl.monitor({
-    output   = "HDMI-A-1",
-    mode     = "1680x1050@59.883",
-    position = "1920x0",
+    output   = "eDP-1",
+    mode     = "1920x1080@60.027",
+    position = "1680x0",
     scale    = "1",
 })
+
 
 
 -------------------------------
@@ -139,7 +140,8 @@ hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + SHIFT + RETURN", hl.dsp.exec_cmd("kitty --session ~/.config/kitty/dashboard.session"))
 
 -- Captura de pantalla
-hl.bind("PRINT", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy"))
+hl.bind("PRINT", hl.dsp.exec_cmd("flameshot gui"))
+hl.bind("SHIFT + PRINT", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy"))
 hl.bind(mainMod .. " + PRINT", hl.dsp.exec_cmd("grim - | wl-copy"))
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("grim -g \"$(slurp)\" ~/Pictures/screenshot_$(date +%Y%m%d_%H%M%S).png"))
 
@@ -200,7 +202,7 @@ hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("~/.config/hypr/scripts/brightn
 hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exec_cmd("hyprlock"))
 
 -- Clipboard history
-hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("cliphist list | rofi -dmenu | cliphist decode | wl-copy"))
+hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("~/.config/hypr/scripts/clipboard.sh"))
 
 -- Recargar waybar
 hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("killall waybar && waybar"))
